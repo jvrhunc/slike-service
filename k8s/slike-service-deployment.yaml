@@ -1,0 +1,60 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: slike-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: slike-service
+  template:
+    metadata:
+      labels:
+        app: slike-service
+    spec:
+      terminationGracePeriodSeconds: 30
+      containers:
+        - image: jvrhunc/slike-service:latest
+          name: slike-service
+          imagePullPolicy: "Always"
+          env:
+            - name: db_url
+              value: jdbc:postgresql://rogue.db.elephantsql.com:5432/odmnlcon
+            - name: db_username
+              value: odmnlcon
+            - name: db_password
+              valueFrom:
+                secretKeyRef:
+                  name: password-secret-slike
+                  key: db_password
+          ports:
+            - containerPort: 8082
+              name: server
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /check/health
+              port: server
+            initialDelaySeconds: 20
+            periodSeconds: 3
+          readinessProbe:
+            httpGet:
+              path: /check/health
+              port: server
+            initialDelaySeconds: 20
+            periodSeconds: 3
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: slike-service
+spec:
+  type: LoadBalancer
+  ports:
+    - port: 8082
+      protocol: TCP
+      targetPort: server
+  selector:
+    app: slike-service
