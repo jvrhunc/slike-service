@@ -32,25 +32,27 @@ public class SlikeService {
         return slikeRepository.findById(slikaId).orElse(null);
     }
 
-    public Slika addSlika(Slika slika, MultipartFile file) throws IOException {
-        slika.setUrl(this.amazonClient.uploadFile(file));
-        slika.setCreated(LocalDate.now());
-        return slikeRepository.save(slika);
+    public Slika addSlika(MultipartFile file) throws IOException {
+        Slika added = new Slika();
+        added.setCreated(LocalDate.now());
+        added.setUrl(this.amazonClient.uploadFile(file));
+        added.setReceptId(1);
+        return slikeRepository.save(added);
     }
 
-    public Slika updateSlika(Slika slika, Integer slikaId) {
+    public Slika updateSlika(Integer slikaId, MultipartFile file) throws IOException {
 
         Optional<Slika> slikaToUpdate = slikeRepository.findById(slikaId);
 
-        return slikaToUpdate.map(s -> {
-            s.setCreated(slika.getCreated());
-            s.setUrl(slika.getUrl());
-            s.setReceptId(slika.getReceptId());
-            return slikeRepository.save(s);
-        }).orElseGet(() -> {
-            slika.setSlikaId(slikaId);
-            return slikeRepository.save(slika);
-        });
+        if (slikaToUpdate.isEmpty()) {
+            return null;
+        }
+
+        String imageUrl = this.amazonClient.uploadFile(file);
+        Slika updated = slikaToUpdate.get();
+        updated.setUrl(imageUrl);
+        updated.setCreated(LocalDate.now());
+        return slikeRepository.save(updated);
     }
 
     public String deleteSlika(String fileUrl) {

@@ -64,21 +64,21 @@ public class SlikeResource {
             extraTags = {"version", "v1"}
     )
     @PostMapping("/add")
-    public ResponseEntity<Object> addSlika(@RequestPart(value = "slika") Slika slika,
-                          @RequestPart(value = "file") MultipartFile file) throws IOException {
-
-        if (slika == null) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Slika data is required!");
-        }
+    public ResponseEntity<Object> addSlika(@RequestPart(value = "file") MultipartFile file) throws IOException {
 
         if (file == null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Slika file is required!");
         }
 
-        Slika addedSlika = slikeService.addSlika(slika, file);
+        Slika addedSlika = null;
+        if (awsRekognitionService.detectFood(file)) {
+            addedSlika = slikeService.addSlika(file);
+        } else {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Slika is not a food!");
+        }
 
         if (addedSlika == null) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error while saving Slika!");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error while adding Slika!");
         }
 
         return ResponseEntity.status(HttpStatus.OK).body(addedSlika);
@@ -91,19 +91,21 @@ public class SlikeResource {
             extraTags = {"version", "v1"}
     )
     @PutMapping("/update/{slikaId}")
-    public ResponseEntity<Object> updateSlika(@RequestBody Slika slika, @PathVariable("slikaId") Integer slikaId) {
+    public ResponseEntity<Object> updateSlika(@PathVariable("slikaId") Integer slikaId,
+                                              @RequestPart(value = "file") MultipartFile file) throws IOException {
 
         if (slikaId == null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Slika Id is required!");
         }
 
-        if (slika == null) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Slika data is required!");
+        Slika updatedSlika = null;
+        if (awsRekognitionService.detectFood(file)) {
+            updatedSlika = slikeService.updateSlika(slikaId, file);
+        } else {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Slika is not a food!");
         }
 
-        Slika updatedSlika = slikeService.updateSlika(slika, slikaId);
-
-        if(updatedSlika == null) {
+        if (updatedSlika == null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error while updating Slika!");
         }
 
