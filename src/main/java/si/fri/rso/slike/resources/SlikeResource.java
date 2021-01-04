@@ -79,8 +79,9 @@ public class SlikeResource {
             percentiles = {0.95, 0.99},
             extraTags = {"version", "v1"}
     )
-    @PostMapping("/add")
-    public ResponseEntity<Object> addSlika(@RequestPart(value = "file") MultipartFile file) throws IOException {
+    @PostMapping("/add/{receptId}")
+    public ResponseEntity<Object> addSlika(@RequestPart(value = "file") MultipartFile file,
+                                           @PathVariable("receptId") Integer receptId) throws IOException {
 
         if (file == null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Slika file is required!");
@@ -88,7 +89,7 @@ public class SlikeResource {
 
         Slika addedSlika = null;
         if (awsRekognitionService.detectFood(file)) {
-            addedSlika = slikeService.addSlika(file);
+            addedSlika = slikeService.addSlika(file, receptId);
         } else {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Slika is not a food!");
         }

@@ -36,11 +36,11 @@ public class SlikeService {
         return slikeRepository.getByReceptId(receptId);
     }
 
-    public Slika addSlika(MultipartFile file) throws IOException {
+    public Slika addSlika(MultipartFile file, Integer receptId) throws IOException {
         Slika added = new Slika();
         added.setCreated(LocalDate.now());
         added.setUrl(this.amazonClient.uploadFile(file));
-        added.setReceptId(1);
+        added.setReceptId(receptId);
         return slikeRepository.save(added);
     }
 

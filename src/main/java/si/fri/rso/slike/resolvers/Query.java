@@ -20,7 +20,7 @@ public class Query implements GraphQLQueryResolver {
         return slikeRepository.findById(id).orElse(null);
     }
 
-    public Iterable<Slika> findSlikaByReceptId(Integer id) {
+    public Slika findSlikaByReceptId(Integer id) {
         return slikeRepository.getByReceptId(id);
     }
 
