@@ -11,17 +11,13 @@ public class Slika {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "slika_id")
     private Integer slikaId;
 
-    @Column(name = "created")
     @JsonFormat(pattern="dd-MM-yyyy", timezone="Europe/Ljubljana")
     private LocalDate created;
 
-    @Column(name = "url")
     private String url;
 
-    @Column(name = "recept_id")
     private Integer receptId;
 
     public Slika() {
