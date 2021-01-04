@@ -1,0 +1,6 @@
+type Query {
+    findAllSlike: [Slika]
+    findSlikaById(id: ID): Slika
+    findSlikaByReceptId(id: Int): [Slika]
+    findSlikaByUrl(url: String): Slika
+}

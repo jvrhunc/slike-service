@@ -1,0 +1,5 @@
+type Slika {
+    slikaId: ID!
+    url: String!
+    receptId: Int!
+}
