@@ -1,0 +1,10 @@
+spring:
+  cloud:
+    consul:
+      host: localhost
+      port: 8500
+      config:
+        fail-fast: false
+      discovery:
+        fail-fast: false
+        prefer-ip-address: true

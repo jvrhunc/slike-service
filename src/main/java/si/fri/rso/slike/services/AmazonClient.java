@@ -15,7 +15,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.PostConstruct;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Date;
@@ -46,8 +45,18 @@ public class AmazonClient {
         this.s3 = new AmazonS3Client(credentials);
     }
 
+    private Boolean isImage(MultipartFile file) {
+        // TO-DO
+        return true;
+    }
+
     public String uploadFile(MultipartFile multipartFile) throws IOException {
         String fileUrl = "";
+
+        if (!isImage(multipartFile)) {
+            throw new IllegalStateException("Napačen tip datoteke");
+        }
+
         try {
             File file = convertMultiPartToFile(multipartFile);
             String fileName = generateFileName(multipartFile);
@@ -56,6 +65,7 @@ public class AmazonClient {
             file.delete();
         } catch (AmazonServiceException ase) {
             log.error("Napaka pri nalaganju datoteke na S3", ase);
+            throw new IllegalStateException("Napaka pri nalaganju datoteke na S3", ase);
         }
         return fileUrl;
     }
