@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import si.fri.rso.slike.models.Slika;
+import si.fri.rso.slike.services.AwsRekognitionService;
 import si.fri.rso.slike.services.SlikeService;
 
 import java.io.IOException;
@@ -19,6 +20,9 @@ public class SlikeResource {
 
     @Autowired
     private SlikeService slikeService;
+
+    @Autowired
+    private AwsRekognitionService awsRekognitionService;
 
     @Timed(
             value = "Slike.getAll",
@@ -143,5 +147,16 @@ public class SlikeResource {
     @DeleteMapping("/s3/deleteFile")
     public ResponseEntity<Object> deleteFile (@RequestPart(value = "url") String fileUrl) {
         return ResponseEntity.status(HttpStatus.OK).body(slikeService.deleteFile(fileUrl));
+    }
+
+    @Timed(
+            value = "Slike.detectFood",
+            histogram = true,
+            percentiles = {0.95, 0.99},
+            extraTags = {"version", "v1"}
+    )
+    @PostMapping("/rekognition")
+    public Object detectFood(@RequestParam MultipartFile image) throws IOException {
+        return ResponseEntity.status(HttpStatus.OK).body(awsRekognitionService.detectFood(image));
     }
 }
