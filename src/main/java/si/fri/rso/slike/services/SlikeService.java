@@ -32,6 +32,10 @@ public class SlikeService {
         return slikeRepository.findById(slikaId).orElse(null);
     }
 
+    public Slika getSlikaByReceptId(Integer receptId) {
+        return slikeRepository.getByReceptId(receptId);
+    }
+
     public Slika addSlika(MultipartFile file) throws IOException {
         Slika added = new Slika();
         added.setCreated(LocalDate.now());

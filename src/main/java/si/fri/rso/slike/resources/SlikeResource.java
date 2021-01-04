@@ -57,6 +57,22 @@ public class SlikeResource {
         return ResponseEntity.status(HttpStatus.OK).body(slika);
     }
 
+    @GetMapping("/recept/{receptId}")
+    public ResponseEntity<Object> getSlikaByReceptId (@PathVariable("receptId") Integer receptId) {
+
+        if (receptId == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Recept Id is required!");
+        }
+
+        Slika slika = slikeService.getSlikaByReceptId(receptId);
+
+        if(slika == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
+
+        return ResponseEntity.status(HttpStatus.OK).body(slika);
+    }
+
     @Timed(
             value = "Slike.save",
             histogram = true,
