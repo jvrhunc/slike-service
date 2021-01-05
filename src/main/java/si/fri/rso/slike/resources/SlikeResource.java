@@ -57,6 +57,12 @@ public class SlikeResource {
         return ResponseEntity.status(HttpStatus.OK).body(slika);
     }
 
+    @Timed(
+            value = "Slike.getByReceptId",
+            histogram = true,
+            percentiles = {0.95, 0.99},
+            extraTags = {"version", "v1"}
+    )
     @GetMapping("/recept/{receptId}")
     public ResponseEntity<Object> getSlikaByReceptId (@PathVariable("receptId") Integer receptId) {
 
@@ -89,7 +95,12 @@ public class SlikeResource {
 
         Slika addedSlika = null;
         if (awsRekognitionService.detectFood(file)) {
-            addedSlika = slikeService.addSlika(file, receptId);
+            Slika slika = slikeService.getSlikaByReceptId(receptId);
+            if(slika == null) {
+                addedSlika = slikeService.addSlika(file, receptId);
+            } else {
+                addedSlika = slikeService.updateSlika(slika.getSlikaId(), file);
+            }
         } else {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Slika is not a food!");
         }
