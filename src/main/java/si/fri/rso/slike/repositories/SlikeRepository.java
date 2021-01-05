@@ -6,4 +6,5 @@ import si.fri.rso.slike.models.Slika;
 public interface SlikeRepository extends JpaRepository<Slika, Integer> {
     Slika getByUrl(String fileUrl);
     Slika getByReceptId(Integer receptId);
+    void deleteAllByReceptId(Integer receptId);
 }

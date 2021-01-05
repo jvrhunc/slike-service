@@ -157,6 +157,24 @@ public class SlikeResource {
         return ResponseEntity.status(HttpStatus.OK).body(deleted);
     }
 
+    @DeleteMapping("/delete/recept/{receptId}")
+    public ResponseEntity<Object> deleteByReceptId(@PathVariable("receptId") Integer receptId) {
+
+        if (receptId == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Recept Id is required!");
+        }
+
+        Boolean uspesno = slikeService.deleteByReceptId(receptId);
+
+        if(uspesno) {
+            return ResponseEntity.status(HttpStatus.NO_CONTENT)
+                    .body(true);
+        }
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body("Error while deleting Slike with Recept Id: " + receptId);
+    }
+
     @Timed(
             value = "Slike.uploadFile.S3",
             histogram = true,

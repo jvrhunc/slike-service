@@ -6,6 +6,7 @@ import org.springframework.web.multipart.MultipartFile;
 import si.fri.rso.slike.models.Slika;
 import si.fri.rso.slike.repositories.SlikeRepository;
 
+import javax.transaction.Transactional;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.List;
@@ -67,6 +68,12 @@ public class SlikeService {
         return deleted;
     }
 
+    @Transactional
+    public Boolean deleteByReceptId(Integer receptId) {
+        slikeRepository.deleteAllByReceptId(receptId);
+        return true;
+    }
+
     public String uploadFile (MultipartFile file) throws IOException {
         return this.amazonClient.uploadFile(file);
     }
@@ -74,5 +81,6 @@ public class SlikeService {
     public String deleteFile (String fileUrl) {
         return this.amazonClient.deleteFileFromS3Bucket(fileUrl);
     }
+
 
 }
