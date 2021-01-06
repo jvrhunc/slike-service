@@ -16,6 +16,7 @@ import java.io.IOException;
 @RestController
 @RequestMapping("/v1/slike")
 @RefreshScope
+@CrossOrigin("*")
 public class SlikeResource {
 
     @Autowired
