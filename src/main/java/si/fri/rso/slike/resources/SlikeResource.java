@@ -198,6 +198,11 @@ public class SlikeResource {
         return ResponseEntity.status(HttpStatus.OK).body(slikeService.deleteFile(fileUrl));
     }
 
+    @GetMapping("/s3/getFile/{imageId}")
+    public ResponseEntity<Object> getFile (@PathVariable("imageId") Integer imageId) throws IOException {
+        return ResponseEntity.status(HttpStatus.OK).body(slikeService.getFile(imageId));
+    }
+
     @Timed(
             value = "Slike.detectFood",
             histogram = true,

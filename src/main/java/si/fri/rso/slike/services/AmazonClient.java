@@ -5,8 +5,7 @@ import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3Client;
-import com.amazonaws.services.s3.model.DeleteObjectRequest;
-import com.amazonaws.services.s3.model.PutObjectRequest;
+import com.amazonaws.services.s3.model.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -110,5 +109,10 @@ public class AmazonClient {
         String fileName = fileUrl.substring(fileUrl.lastIndexOf("/") + 1);
         s3.deleteObject(new DeleteObjectRequest(bucketName, fileName));
         return "Datoteka uspešno izbrisana";
+    }
+
+    public S3ObjectInputStream getFile(String fileUrl) {
+        String fileName = fileUrl.substring(fileUrl.lastIndexOf("/") + 1);
+        return s3.getObject(new GetObjectRequest(bucketName, fileName)).getObjectContent();
     }
 }
